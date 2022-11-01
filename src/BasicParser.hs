@@ -18,6 +18,15 @@ newtype Parser a = Parser {
     runParser :: String -> (String, Either ParseError a)
 }
 
+--I guess that runParser isn't a function in the outer scope even though it looks like one
+--because of the newtype declaration, if you create a parser it is required that you
+--provide an 'implementation' for the runParser 'interface'
+--and when we defined 'any' and 'eof', we didn't need to write something like
+--any = Parser { runParser = case input of {[] -> ("", Right()); somethingElse -> ...}}
+--because the newtype declaration only allows for one 'argument' to the type constructor
+--so the compiler realizes that the anonymous functions in 'any' and 'eof' exist to satisfy
+--the runParser 'interface'
+
 --any and eof correspond to the constructors of a list
 --eof is like the empty list,
 --and any means that there is one or more inputs left (a list with content in it)
