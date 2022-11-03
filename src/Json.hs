@@ -8,3 +8,4 @@ data JValue = JObject (HM.HashMap String JValue)
     | JNumber Double
     | JBool Bool
     | JNull
+    deriving Show

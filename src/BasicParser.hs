@@ -19,7 +19,7 @@ import Json (
 data ParseError = ParseError {
     errExpected :: String
     , errFound :: String
-}
+} deriving Show
 
 --I was really confused about how to run this because
 --I thought that the runParser function was 'attached' to a parser
