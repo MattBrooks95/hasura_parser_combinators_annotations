@@ -8,6 +8,7 @@ import BasicParser (
     , any
     , Parser(..)
     , runParser
+    , eof
     )
 import Json (
     JValue(..)
@@ -202,6 +203,11 @@ jsonValue = choice "a JSON value"
     , JBool <$> jsonBool
     , JNull <$ symbol "null"
     ]
+
+json = spaces >> jsonValue
+
+run :: Parser a -> String -> Either ParseError a
+run parser stringInput = snd $ runParser (parser <* eof) stringInput
 
 --(*>) :: Parser a -> Parser b -> Parser b
 
