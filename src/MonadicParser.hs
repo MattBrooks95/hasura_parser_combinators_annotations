@@ -19,6 +19,8 @@ import Data.Foldable (
     foldr
     )
 
+--import Debug.Trace
+
 --newtype Parser a = Parser {
 --    runParser :: String -> (String, Either ParseError a)
 --}
@@ -27,8 +29,13 @@ import Data.Foldable (
 jsonEntry :: Parser (String, JValue)
 jsonEntry = do
     key <- jsonString
-    _ <- char ':'
+    --traceM ("found json key:" ++ show key)-- this is how you do "printf debugging" in do notation
+    --_ <- char ':' --the code from the article didn't have <* spaces after the colon
+    --so if there was a space in between the colon and the next value, parsing would fail
+    _ <- char ':' <* spaces
+    --traceM "found colon"
     value <- jsonValue
+    --traceM ("found json value:" ++ show value)
     return (key, value)
 
 --'state' here is just the input stream of characters
@@ -74,23 +81,23 @@ choice description = Data.Foldable.foldr (<|>) noMatch
 --many matches any number of chars (* from regex, matches 0 or more)
 --many1 matches 1 or more (like + in regex)
 many, many1 :: Parser a -> Parser [a]
-many p = many1 p <|> return []
+many p = many1 p <|> pure []
 many1 p = do
     first <- p
     rest <- many p
-    return (first:rest)
+    pure (first:rest)
 
 --match repeated occurences of a given parser with a separator between them
 --parser a matches the first element
 -- parser s matches the separator (its results are thrown out, no reason to keep the commas in 1,2,3,4)
---sepBy, sepBy1 :: Parser a -> Parser s -> Parser [a]
-sepBy p s = sepBy1 p s <|> return []
+sepBy, sepBy1 :: Parser a -> Parser s -> Parser [a]
+sepBy p s = sepBy1 p s <|> pure []
 sepBy1 p s = do
     first <- p
     -- the arg to 'many' says "a parser that matches and then throws away a separator, and then runs the next parser)
     -- which could then do the same recursively
     rest <- many (s >> p)
-    return (first:rest)
+    pure (first:rest)
 
 --char :: Char -> Parser Char
 char c = satisfy [c] (== c)
@@ -109,6 +116,7 @@ spaces = many space
 --symbol skips trailing whitespace, the <* operator throws away the white space
 --after the symbol
 --symbol :: String -> Parser [Char]
+symbol :: String -> Parser [Char]
 symbol s = string s <* spaces
 
 --I don't believe these were actually mentioned in the article
