@@ -166,8 +166,8 @@ jsonBool = choice "JSON boolean"
 
 jsonString =
     --a string is many characters between double quotes
-    --between (char '"') (char '"') (many jsonChar) <* spaces
-    between (string "start") (string "end") (many jsonChar) <* spaces
+    between (char '"') (char '"') (many jsonChar) <* spaces
+    --between (string "start") (string "end") (many jsonChar) <* spaces
     where
         --a character is any non-quote character
         jsonChar = choice "JSON string character"
