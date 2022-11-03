@@ -153,7 +153,7 @@ brackets = between (symbol "[") (symbol "]")
 braces :: Parser b -> Parser b
 braces = between (symbol "{") (symbol "}")
 
-jsonNumber :: Parser[Char]
+jsonNumber :: Parser Double
 jsonNumber = read <$> many1 digit
 
 --tries the parsers in the array, and returns the first one that succeeds
@@ -201,6 +201,7 @@ jsonValue = choice "a JSON value"
     , JArray <$> jsonArray
     , JString <$> jsonString
     , JBool <$> jsonBool
+    , JNumber <$> jsonNumber
     , JNull <$ symbol "null"
     ]
 
